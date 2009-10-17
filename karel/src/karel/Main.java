@@ -57,31 +57,33 @@ public class Main {
 
     public static String kontrolaJmena(String text) {
         String jmenoTest = "";
-        String vratka = "";
+        String nic = "";
         if (text.length() == 0) { //pokud je parametr prazdnej, ukonci to
             System.exit(0);
         }
-        
         for (int i = 0; i < text.length(); i++) {
             if (text.charAt(i) == ' ') {
                 if (jmenoTest.equals(jmeno) == false) {
                     jmenoTest += text.charAt(i);
                     i++;
                 } else {
-                    //if ()
-                    for (int j = text.length() - i; j < text.length(); j++) {
-                        vratka += text.charAt(j);
+                    //pokud jmeno odpovida
+                    for (int p = (i+1); p == 7; p++) {
+                        String vratka = "";
+                        vratka += text.charAt(p);
+                        System.out.println(p);
+                        System.out.println(vratka);
                         return vratka;
                     }
                 }
             }
             jmenoTest += text.charAt(i);
-            if (i == text.length() - 1) {
+            if (i == text.length() - 1) { //pokud je i mensi jak delka
                 System.exit(0);
             }
         }
         System.exit(0);
-        return vratka;
+        return nic;
     }
 
     public static void main(String[] args) {
@@ -91,7 +93,7 @@ public class Main {
         Scanner vstup = new Scanner(System.in);
         String text = vstup.nextLine();
 
-        kontrolaJmena(text);
-        System.out.println("jde to");
+        String postup = kontrolaJmena(text);
+        System.out.println(postup);
     }
 }
