@@ -14,43 +14,55 @@ public class Main {
 
     static int pokusJmeno = 0; //pokusy na jmeno
     static String jmeno = "";
+    static int smer = 0;
 
-    public static String vygenerujJmeno() {
+    public static String zacniHru() {
         String jmenoGen = "";
         double cisloD = (10 * Math.random());
         int cislo = (int) cisloD;
         if (cislo == 0) {
             jmenoGen = "blb";
+            smer = 1;
         }
         if (cislo == 1) {
             jmenoGen = "blb";
+            smer = 2;
         }
         if (cislo == 2) {
             jmenoGen = "blb";
+            smer = 3;
         }
         if (cislo == 3) {
             jmenoGen = "blb";
+            smer = 4;
         }
         if (cislo == 4) {
             jmenoGen = "blb";
+            smer = 1;
         }
         if (cislo == 5) {
             jmenoGen = "blb";
+            smer = 2;
         }
         if (cislo == 6) {
             jmenoGen = "blb";
+            smer = 3;
         }
         if (cislo == 7) {
             jmenoGen = "blb";
+            smer = 4;
         }
         if (cislo == 8) {
             jmenoGen = "blb";
+            smer = 1;
         }
         if (cislo == 9) {
             jmenoGen = "blb";
+            smer = 2;
         }
         if (cislo == 10) {
             jmenoGen = "blb";
+            smer = 3;
         }
         return jmenoGen;
     }
@@ -69,7 +81,7 @@ public class Main {
                 } else {
                     //pokud jmeno odpovida
                     String vratka = "";
-                    for (int p = (i+1); p < text.length(); p++) {
+                    for (int p = (i + 1); p < text.length(); p++) {
                         vratka += text.charAt(p);
                     }
                     return vratka;
@@ -84,14 +96,41 @@ public class Main {
         return nic;
     }
 
+    public static boolean postupuj(String text) {
+        String postup = "";
+        for (int i = 0; i < text.length(); i++) {
+            if (text.charAt(i) == ' ') {
+                if ((postup.equals("KROK") == true) || (postup.equals("VLEVO") == true) || (postup.equals("ZVEDNI") == true)) {
+                    i = text.length(); //toto ukonci zapisovani
+                } else {
+                    if (postup.equals("OPRAVIT") == true) {
+                        String vratka = "";
+                        for (int p = (i + 1); p < text.length(); p++) {
+                            vratka += text.charAt(p);
+                        }
+                        //oprav(); //preda se k oprave
+                    } else {
+                        System.out.println("Chyba");
+                    }
+                }
+                postup += text.charAt(i);
+            }
+        }
+        return false;
+    }
+
     public static void main(String[] args) {
-        jmeno = vygenerujJmeno();
+        jmeno = zacniHru();
         System.out.println("220 Oslovuj mne " + jmeno);
+        boolean vyhra = false;
 
-        Scanner vstup = new Scanner(System.in);
-        String text = vstup.nextLine();
+        while (vyhra == false) {
+            Scanner vstup = new Scanner(System.in);
+            String text = vstup.nextLine();
 
-        String postup = kontrolaJmena(text);
-        System.out.println(postup);
+            String postup = kontrolaJmena(text);
+            vyhra = postupuj(postup);
+        }
+
     }
 }
