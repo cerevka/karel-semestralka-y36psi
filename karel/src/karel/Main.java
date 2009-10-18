@@ -4,6 +4,7 @@
  */
 package karel;
 
+import java.util.Random;
 import java.util.Scanner;
 
 /**
@@ -15,10 +16,16 @@ public class Main {
     static int pokusJmeno = 0; //pokusy na jmeno
     static String jmeno = "";
     static int smer = 0;
+    static int poziceX = 0;
+    static int poziceY = 0;
+    static int pokus = 5;
 
     public static String zacniHru() {
         String jmenoGen = "";
         double cisloD = (10 * Math.random());
+        Random rand = new Random();
+        poziceX = rand.nextInt() % 16; // rozsah -16 až +16
+        poziceY = rand.nextInt() % 16; // rozsah -16 až +16
         int cislo = (int) cisloD;
         if (cislo == 0) {
             jmenoGen = "blb";
@@ -96,21 +103,78 @@ public class Main {
         return nic;
     }
 
-    public static boolean postupuj(String text) {
+    public static boolean postupuj(String text, int chyba) {
         String postup = "";
         for (int i = 0; i < text.length(); i++) {
             if (text.charAt(i) == ' ') {
                 if ((postup.equals("KROK") == true) || (postup.equals("VLEVO") == true) || (postup.equals("ZVEDNI") == true)) {
                     i = text.length(); //toto ukonci zapisovani
+
+                    // KROK
+                    if ((postup.equals("KROK") == true) && (text.length() == 4)) {
+                        if (smer == 1) {
+                            poziceX++;
+                        } else {
+                            if (smer == 2) {
+                                poziceY++;
+                            } else {
+                                if (smer == 3) {
+                                    poziceX--;
+                                } else {
+                                    if (smer == 4) {
+                                        poziceY--;
+                                    } else {
+                                        System.out.println("Nastala neznámá chyba");
+                                    }
+                                }
+                            }
+
+                        }
+                        return false;
+                    }
+                    //konec KROK
+                    //VLEVO
+                    if ((postup.equals("VLEVO") == true) && (text.length() == 5)) {
+                        if (smer == 4) {
+                            smer = 1;
+                        } else {
+                            smer++;
+                        }
+                    }
+                    return false;
+                    //konec VLEVO
+                    //ZVEDNI
+                    if ((postup.equals("ZVEDNI") == true) && (text.length() == 6) && (poziceX==0) && (poziceY==0)) {
+                        System.out.println("221 USPECH Text tajemství");
+                        return true;
+                    } else {
+                        if (postup.equals("ZVEDNI")==true) {
+                           System.out.println("550 NELZE ZVEDNOUT ZNACKU");
+                           pokus--;
+                           return false;
+                        }
+
+                    }
+                    //konec ZVEDNI
+
                 } else {
                     if (postup.equals("OPRAVIT") == true) {
-                        String vratka = "";
+                        int vratka = 0;
                         for (int p = (i + 1); p < text.length(); p++) {
                             vratka += text.charAt(p);
                         }
-                        //oprav(); //preda se k oprave
+                        if (vratka == 0) {
+                            System.out.println("571 NENI PORUCHA");
+                            pokus--;
+                        } else {
+                            if (vratka != chyba) {
+                                System.out.println("571 NENI PORUCHA");
+                                pokus--;
+                            }
+                        }
                     } else {
-                        System.out.println("Chyba");
+                        System.out.println("500 NEZNAMY PRIKAZ");
+                        pokus--;
                     }
                 }
                 postup += text.charAt(i);
@@ -123,13 +187,14 @@ public class Main {
         jmeno = zacniHru();
         System.out.println("220 Oslovuj mne " + jmeno);
         boolean vyhra = false;
+        int chyba = 0;
 
         while (vyhra == false) {
             Scanner vstup = new Scanner(System.in);
             String text = vstup.nextLine();
 
             String postup = kontrolaJmena(text);
-            vyhra = postupuj(postup);
+            vyhra = postupuj(postup, chyba);
         }
 
     }
