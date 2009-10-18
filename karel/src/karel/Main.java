@@ -68,13 +68,11 @@ public class Main {
                     i++;
                 } else {
                     //pokud jmeno odpovida
-                    for (int p = (i+1); p == 7; p++) {
-                        String vratka = "";
+                    String vratka = "";
+                    for (int p = (i+1); p < text.length(); p++) {
                         vratka += text.charAt(p);
-                        System.out.println(p);
-                        System.out.println(vratka);
-                        return vratka;
                     }
+                    return vratka;
                 }
             }
             jmenoTest += text.charAt(i);
