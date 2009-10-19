@@ -1,15 +1,13 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package karel;
 
 import java.util.Random;
 import java.util.Scanner;
 
 /**
- *
- * @author honza
+ * @version 1.0
+ * @author Jan Cermak (cermaja9@fel.cvut.cz) & Tomas Cerevka (cerevtom@fel.cvut.cz)
+ * Semestrální práce z Y36PSI - práce číslo 1 - Karel
+ * zadání: https://dsn.felk.cvut.cz/wiki/vyuka/y36psi/cviceni/uloha1-karel-zadani
  */
 public class Main {
 
@@ -19,57 +17,51 @@ public class Main {
     static int poziceX = 0;
     static int poziceY = 0;
     static int pokus = 5;
+    static int porucha = 0;
+    static Random rand = new Random();
 
     public static String zacniHru() {
         String jmenoGen = "";
         double cisloD = (10 * Math.random());
-        Random rand = new Random();
         poziceX = rand.nextInt() % 16; // rozsah -16 až +16
         poziceY = rand.nextInt() % 16; // rozsah -16 až +16
+        pokus = (Math.abs(rand.nextInt() % 12) + 1); //rozsah 1 - 13
+        smer = (Math.abs(rand.nextInt() % 3) + 1); //rozsah 1 - 4
+
+
         int cislo = (int) cisloD;
         if (cislo == 0) {
             jmenoGen = "blb";
-            smer = 1;
         }
         if (cislo == 1) {
             jmenoGen = "blb";
-            smer = 2;
         }
         if (cislo == 2) {
             jmenoGen = "blb";
-            smer = 3;
         }
         if (cislo == 3) {
             jmenoGen = "blb";
-            smer = 4;
         }
         if (cislo == 4) {
             jmenoGen = "blb";
-            smer = 1;
         }
         if (cislo == 5) {
             jmenoGen = "blb";
-            smer = 2;
         }
         if (cislo == 6) {
             jmenoGen = "blb";
-            smer = 3;
         }
         if (cislo == 7) {
             jmenoGen = "blb";
-            smer = 4;
         }
         if (cislo == 8) {
             jmenoGen = "blb";
-            smer = 1;
         }
         if (cislo == 9) {
             jmenoGen = "blb";
-            smer = 2;
         }
         if (cislo == 10) {
             jmenoGen = "blb";
-            smer = 3;
         }
         return jmenoGen;
     }
@@ -103,11 +95,24 @@ public class Main {
         return nic;
     }
 
+    public static void jePorucha() {
+        if (porucha != 0) { //pokud je to porucha
+            System.out.println("572 ROBOT SE ROZPADL");
+            System.exit(0);
+        }
+    }
+
     public static boolean postupuj(String text, int chyba) {
+        //generovani poruchy
+        if ((Math.abs(rand.nextInt() % 3) + 1) == 4) { //generovani 1-4, kazdy ctvrty je porouchany
+            porucha = (Math.abs(rand.nextInt() % 8) + 1); //generovani bloku poruchy
+        }
+        //konec generovani
         String postup = "";
         for (int i = 0; i < text.length(); i++) {
             if (text.charAt(i) == ' ') {
                 if ((postup.equals("KROK") == true) || (postup.equals("VLEVO") == true) || (postup.equals("ZVEDNI") == true)) {
+                    jePorucha(); //kotrola jestli je porucha
                     i = text.length(); //toto ukonci zapisovani
 
                     // KROK
@@ -140,42 +145,47 @@ public class Main {
                         } else {
                             smer++;
                         }
+                        return false;
                     }
-                    return false;
                     //konec VLEVO
                     //ZVEDNI
-                    if ((postup.equals("ZVEDNI") == true) && (text.length() == 6) && (poziceX==0) && (poziceY==0)) {
+                    if ((postup.equals("ZVEDNI") == true) && (text.length() == 6) && (poziceX == 0) && (poziceY == 0)) {
                         System.out.println("221 USPECH Text tajemství");
                         return true;
                     } else {
-                        if (postup.equals("ZVEDNI")==true) {
-                           System.out.println("550 NELZE ZVEDNOUT ZNACKU");
-                           pokus--;
-                           return false;
+                        if (postup.equals("ZVEDNI") == true) {
+                            System.out.println("550 NELZE ZVEDNOUT ZNACKU");
+                            pokus--;
+                            return false;
                         }
 
                     }
                     //konec ZVEDNI
-
+                    //OPRAVIT
                 } else {
                     if (postup.equals("OPRAVIT") == true) {
                         int vratka = 0;
                         for (int p = (i + 1); p < text.length(); p++) {
                             vratka += text.charAt(p);
                         }
-                        if (vratka == 0) {
+                        if (porucha == 0) { // je nejka porucha vubec?
                             System.out.println("571 NENI PORUCHA");
                             pokus--;
                         } else {
-                            if (vratka != chyba) {
+                            if (vratka != porucha) { //nesouhlasi porouchanj blok
                                 System.out.println("571 NENI PORUCHA");
                                 pokus--;
+                            } else {
+                                if (vratka == porucha) { //opraveni poruchy
+                                    porucha = 0;
+                                }
                             }
                         }
                     } else {
                         System.out.println("500 NEZNAMY PRIKAZ");
                         pokus--;
                     }
+                    //konec OPRAVIT
                 }
                 postup += text.charAt(i);
             }
@@ -191,11 +201,16 @@ public class Main {
 
         while (vyhra == false) {
             Scanner vstup = new Scanner(System.in);
-            String text = vstup.nextLine();
+            String text = vstup.nextLine(); //vstup uzivatele
 
-            String postup = kontrolaJmena(text);
-            vyhra = postupuj(postup, chyba);
+            String postup = kontrolaJmena(text); //zkontroluje jmeno
+            vyhra = postupuj(postup, chyba); //urci vyhra true/flase
+
+            if (pokus <= 0) {  //zkotroluje pocet pokusu
+                System.out.println("Překročen počet pokusů.s Ukončuji spojení.");
+                System.exit(0);
+            }
+
         }
-
     }
 }
