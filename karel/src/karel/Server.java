@@ -16,6 +16,7 @@ public class Server {
             while (true) {
                 Socket clientSocket = serverSocket.accept();
                 new ClientThread(clientSocket);
+                System.out.println("Pripojil jsem dalsiho klienta.");
             }
 
         } catch (SocketException e) {
