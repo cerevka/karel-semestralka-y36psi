@@ -18,6 +18,7 @@ public class Main {
     static int poziceY = 0;
     static int porucha = 0;
     static Random rand = new Random();
+    static boolean chybka = false;
 
     public static String zacniHru() {
         String jmenoGen = "";
@@ -68,7 +69,7 @@ public class Main {
         String jmenoTest = "";
         String nic = "";
         if (text.length() == 0) { //pokud je parametr prazdnej, ukonci to
-            System.exit(0);
+            ukonciSpojeni();
         }
         for (int i = 0; i < text.length(); i++) {
             if (text.charAt(i) == ' ') { //narazime na mezeru
@@ -89,6 +90,7 @@ public class Main {
             }
         }
         System.out.println("Chybne jmeno");
+        chybka = true;
         return nic;
     }
 
@@ -102,11 +104,9 @@ public class Main {
     public static boolean postupuj(String text) {
         int i = 0;
         if (text.length() == 0) {//kotrola zda predchotzi metoda zamitla kontrolu jmena
+            chybka = true;
             return false;
         }
-
-
-
 
         String postup = "";
         for (i = 0; i < text.length(); i++) { //jede cyklus
@@ -115,20 +115,41 @@ public class Main {
         if ((text.equals("KROK") == true) || (text.equals("VLEVO") == true) || (text.equals("ZVEDNI") == true)) { //pokud na ni narazi, zkontroluje jetsli text neni
             jePorucha(); //kotrola jestli je porucha
             // KROK
-            if ((text.equals("KROK") == true) && (text.length() == 4)) {
+            if ((text.equals("KROK") == true) && (text.length() == 4) && (porucha == 0)) {
                 if (smer == 1) {
-                    poziceX++;
+                    if (poziceX < 17) {
+                        poziceX++;
+                    } else {
+                        System.out.println("530 HAVARIE");
+                        ukonciSpojeni();
+                    }
                 } else {
                     if (smer == 2) {
-                        poziceY++;
+                        if (poziceY < 17) {
+                            poziceY++;
+                        } else {
+                            System.out.println("530 HAVARIE");
+                            ukonciSpojeni();
+                        }
                     } else {
                         if (smer == 3) {
-                            poziceX--;
+                            if (poziceX > -17) {
+                                poziceX--;
+                            } else {
+                                System.out.println("530 HAVARIE");
+                                ukonciSpojeni();
+                            }
                         } else {
                             if (smer == 4) {
-                                poziceY--;
+                                if (poziceY > -17) {
+                                    poziceY--;
+                                } else {
+                                    System.out.println("530 HAVARIE");
+                                    ukonciSpojeni();
+                                }
                             } else {
                                 System.out.println("Nastala neznámá chyba");
+                                chybka = true;
                             }
                         }
                     }
@@ -138,7 +159,7 @@ public class Main {
             }
             //konec KROK
             //VLEVO
-            if ((text.equals("VLEVO") == true) && (text.length() == 5)) {
+            if ((text.equals("VLEVO") == true) && (text.length() == 5) && (porucha == 0)) {
                 if (smer == 4) {
                     smer = 1;
                 } else {
@@ -149,48 +170,46 @@ public class Main {
             }
             //konec VLEVO
             //ZVEDNI
-            if ((text.equals("ZVEDNI") == true) && (text.length() == 6) && (poziceX == 0) && (poziceY == 0)) {
+            if ((text.equals("ZVEDNI") == true) && (text.length() == 6) && (poziceX == 0) && (poziceY == 0) && (porucha == 0)) {
                 System.out.println("221 USPECH Text tajemství");
+                chybka = true;
                 return true;
             } else {
-                if (text.equals("ZVEDNI") == true) {
+                if (text.equals("ZVEDNI") == true && (porucha == 0)) {
                     System.out.println("550 NELZE ZVEDNOUT ZNACKU");
+                    chybka = true;
                     ukonciSpojeni();
                 }
 
             }
         }
         //konec ZVEDNI
-
-        System.out.println(text);
         //zacatek OPRAVIT
-
         if (text.length() > 8) {
             String oprava = "";
             for (int j = 0; j <= 6; j++) {
                 oprava += text.charAt(j);
             }
 
-           System.out.println("oprava je" + oprava + " 8. znak je " + text.charAt(8) + " porucha " + porucha);
             if (oprava.equals("OPRAVIT") == true) {
-                if (porucha != (int)text.charAt(8)) { //nesouhlasi porouchanej blok
+                if (String.valueOf(porucha).charAt(0) != text.charAt(8)) { //nesouhlasi porouchanej blok
                     System.out.println("571 NENI PORUCHA");
-                    System.out.println("chyba 1");
+                    chybka = true;
                     ukonciSpojeni();
                 } else {
-                    if ((int)text.charAt(8) != porucha) { //opraveni poruchy
-                      porucha = 0;
+                    if (text.charAt(8) == String.valueOf(porucha).charAt(0)) { //opraveni poruchy
+                        porucha = 0;
                         return false;
                     } else {
                         System.out.println("571 NENI PORUCHA");
-                        System.out.println("chyba 2");
+                        chybka = true;
                         ukonciSpojeni();
                     }
                 }
             }  //konec OPRAVIT
         }
         System.out.println("500 NEZNAMY PRIKAZ");
-
+        chybka = true;
         return false;
 
     }
@@ -201,17 +220,20 @@ public class Main {
     }
 
     public static void vypisPolohu() {
-        System.out.println("250 OK (" + poziceX + "," + poziceY + ")");
+        if (chybka == false) {
+            System.out.println("250 OK (" + poziceX + "," + poziceY + ")");
+        }
     }
 
-    public static generujPoruchu() {
+    public static void generujPoruchu() {
         //generovani poruchy
         if ((Math.abs(rand.nextInt() % 3) + 1) == 3) { //generovani 1-4, kazdy ctvrty je porouchany
             porucha = (Math.abs(rand.nextInt() % 8) + 1); //generovani bloku poruchy
             System.out.println("570 PORUCHA BLOK " + porucha);
+        } else {
+            porucha = 0;
+            vypisPolohu();
         }
-        porucha = 0;
-        vypisPolohu();
         //konec generovani poruchy
 
     }
@@ -222,10 +244,11 @@ public class Main {
         boolean vyhra = false;
 
         while (vyhra == false) {
+            
             Scanner vstup = new Scanner(System.in);
             String text = vstup.nextLine(); //vstup uzivatele
 
-
+            chybka = false;
             String postup = kontrolaJmena(text); //zkontroluje jmeno
             vyhra = postupuj(postup); //urci vyhra true/flase
             generujPoruchu(); //vygeneruje se porucha
