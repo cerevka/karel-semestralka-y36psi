@@ -16,7 +16,6 @@ public class Main {
     static int smer = 0;
     static int poziceX = 0;
     static int poziceY = 0;
-    static int pokus = 5;
     static int porucha = 0;
     static Random rand = new Random();
 
@@ -25,7 +24,6 @@ public class Main {
         double cisloD = (10 * Math.random());
         poziceX = rand.nextInt() % 17; // rozsah -17 až +17
         poziceY = rand.nextInt() % 17; // rozsah -17 až +17
-        pokus = (Math.abs(rand.nextInt() % 12) + 1); //rozsah 1 - 13
         smer = (Math.abs(rand.nextInt() % 3) + 1); //rozsah 1 - 4
 
 
@@ -101,19 +99,15 @@ public class Main {
         }
     }
 
-    public static boolean postupuj(String text, int chyba) {
+    public static boolean postupuj(String text) {
         int i = 0;
         if (text.length() == 0) {//kotrola zda predchotzi metoda zamitla kontrolu jmena
-            pokus--;
             return false;
         }
-        //generovani poruchy
-        if ((Math.abs(rand.nextInt() % 3) + 1) == 3) { //generovani 1-4, kazdy ctvrty je porouchany
-            porucha = (Math.abs(rand.nextInt() % 8) + 1); //generovani bloku poruchy
-            System.out.println("570 PORUCHA BLOK " + porucha);
-            return false;
-        }
-        //konec generovani poruchy
+
+
+
+
         String postup = "";
         for (i = 0; i < text.length(); i++) { //jede cyklus
             postup += text.charAt(i);
@@ -139,7 +133,7 @@ public class Main {
                         }
                     }
                 }
-                vypisPolohu();
+
                 return false;
             }
             //konec KROK
@@ -150,7 +144,7 @@ public class Main {
                 } else {
                     smer++;
                 }
-                vypisPolohu();
+
                 return false;
             }
             //konec VLEVO
@@ -165,35 +159,40 @@ public class Main {
                 }
 
             }
-            //konec ZVEDNI
-            //OPRAVIT
-        } else {
-            if (text.equals("OPRAVIT") == true) {
-                int vratka = 0;
-                for (int p = (i + 1); p < text.length(); p++) {
-                    vratka += text.charAt(p);
-                }
-                if (porucha == 0) { // je nejka porucha vubec?
+        }
+        //konec ZVEDNI
+
+        System.out.println(text);
+        //zacatek OPRAVIT
+
+        if (text.length() > 8) {
+            String oprava = "";
+            for (int j = 0; j <= 6; j++) {
+                oprava += text.charAt(j);
+            }
+
+           System.out.println("oprava je" + oprava + " 8. znak je " + text.charAt(8) + " porucha " + porucha);
+            if (oprava.equals("OPRAVIT") == true) {
+                if (porucha != (int)text.charAt(8)) { //nesouhlasi porouchanej blok
                     System.out.println("571 NENI PORUCHA");
+                    System.out.println("chyba 1");
                     ukonciSpojeni();
                 } else {
-                    if (vratka != porucha) { //nesouhlasi porouchanj blok
-                        System.out.println("571 NENI PORUCHA");
-                        ukonciSpojeni();
+                    if ((int)text.charAt(8) != porucha) { //opraveni poruchy
+                      porucha = 0;
+                        return false;
                     } else {
-                        if (vratka == porucha) { //opraveni poruchy
-                            porucha = 0;
-                        }
+                        System.out.println("571 NENI PORUCHA");
+                        System.out.println("chyba 2");
+                        ukonciSpojeni();
                     }
                 }
-            } else {
-                System.out.println("500 NEZNAMY PRIKAZ");
-                pokus--;
-            }
-            //konec OPRAVIT
+            }  //konec OPRAVIT
         }
+        System.out.println("500 NEZNAMY PRIKAZ");
 
         return false;
+
     }
 
     public static void ukonciSpojeni() {
@@ -205,18 +204,31 @@ public class Main {
         System.out.println("250 OK (" + poziceX + "," + poziceY + ")");
     }
 
+    public static generujPoruchu() {
+        //generovani poruchy
+        if ((Math.abs(rand.nextInt() % 3) + 1) == 3) { //generovani 1-4, kazdy ctvrty je porouchany
+            porucha = (Math.abs(rand.nextInt() % 8) + 1); //generovani bloku poruchy
+            System.out.println("570 PORUCHA BLOK " + porucha);
+        }
+        porucha = 0;
+        vypisPolohu();
+        //konec generovani poruchy
+
+    }
+
     public static void main(String[] args) {
         jmeno = zacniHru();
         System.out.println("220 Oslovuj mne " + jmeno);
         boolean vyhra = false;
-        int chyba = 0;
 
         while (vyhra == false) {
             Scanner vstup = new Scanner(System.in);
             String text = vstup.nextLine(); //vstup uzivatele
 
+
             String postup = kontrolaJmena(text); //zkontroluje jmeno
-            vyhra = postupuj(postup, chyba); //urci vyhra true/flase
+            vyhra = postupuj(postup); //urci vyhra true/flase
+            generujPoruchu(); //vygeneruje se porucha
 
         }
     }
