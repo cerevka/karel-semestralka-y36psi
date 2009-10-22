@@ -20,6 +20,7 @@ public class Main {
     static Random rand = new Random();
     static boolean chybka = false;
 
+    // OBSAZENO V KONSTROKTURU RIDICIHO MODULU
     public static String zacniHru() {
         String jmenoGen = "";
         double cisloD = (10 * Math.random());
@@ -239,6 +240,7 @@ public class Main {
     }
 
     public static void main(String[] args) {
+        /*
         jmeno = zacniHru();
         System.out.println("220 Oslovuj mne " + jmeno);
         boolean vyhra = false;
@@ -254,5 +256,8 @@ public class Main {
             generujPoruchu(); //vygeneruje se porucha
 
         }
+         */
+        //new Server(5555);
+        new ControlModul();
     }
 }

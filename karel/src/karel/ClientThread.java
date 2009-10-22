@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package karel;
 
 import java.io.BufferedReader;
@@ -14,24 +10,51 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
- * @author tom
+ * Trida, ktera mam na starosti obsluhu klienta, pro kazdeho klienta se spousti
+ * zvlastni vlakno.
  */
 public class ClientThread implements Runnable {
 
     //==SOUKROMÉ OBJEKTOVÉ PROMĚNNÉ=============================================
-    BufferedReader reader;
-    BufferedWriter writer;
+    private BufferedReader reader;
+    private BufferedWriter writer;
+    private Thread thread = null;
+    private ControlModul modul;
 
+
+    //==KONSTRUKTOR=============================================================
+    /**
+     * Konstruktor vytvari vstupni a vystupni streamy na zaklade predanych
+     * udaju v socketu
+     * @param socket Obsahuje udaje o klientovi, se kterym se komunikuje
+     */
     public ClientThread(Socket socket) {
         try {
+            // vytvori vstupni stream
             reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            // vytvori vystupni stream
             writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            // vytvori se ControlModul s aplikacni logikou
+            modul = new ControlModul();
+            // nastartuje vlakno
+            this.start();
         } catch (IOException ex) {
-            Logger.getLogger(ClientThread.class.getName()).log(Level.SEVERE, null, ex);
+            System.err.println("ClientThread hlasi: IOException");
         }
     }
 
+    /**
+     * Metoda, ktera ma starosti vytvoreni vlakna a jeho odstartovani.
+     */
+    public void start() {
+        thread = new Thread();
+        thread.run();
+
+    }
+
+    /**
+     * Metoda definujici beh vlakna
+     */
     public void run() {
     }
 }
