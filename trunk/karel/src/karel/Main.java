@@ -67,6 +67,7 @@ public class Main {
         return jmenoGen;
     }
 
+
     public static String kontrolaJmena(String text) {
         String jmenoTest = "";
         String nic = "";
@@ -258,7 +259,7 @@ public class Main {
 
         }
          */
-        //new Server(5555);
-        new ControlModul();
+        new Server(3700);
+        //new ControlModul();
     }
 }

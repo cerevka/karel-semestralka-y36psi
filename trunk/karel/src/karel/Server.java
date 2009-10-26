@@ -18,7 +18,9 @@ public class Server {
             while (true) {
                 System.out.println("Server ceka na pripojeni klienta");
                 Socket clientSocket = serverSocket.accept();
-                new ClientThread(clientSocket);
+                ClientThread vlakno = new ClientThread(clientSocket);
+                System.out.println("Startuji vlakno");
+                vlakno.start();
                 System.out.println("Pripojil jsem dalsiho klienta.");
             }
 
