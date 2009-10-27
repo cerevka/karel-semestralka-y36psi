@@ -16,9 +16,9 @@ public class ControlModul {
     private String name;
 
     private enum Direction {
-
-        NAHORU, DOLU, VLEVO, VPRAVO
+        NAHORU, VLEVO, DOLU, VPRAVO
     };
+    
     private Direction direction;
     private boolean error = false;
     private int errorBlock = 0;
@@ -26,16 +26,13 @@ public class ControlModul {
     //==KONSTRUKTOR=============================================================
     public ControlModul() {
         // vygeneruje jmeno pro robota
-        this.generateName();
-        System.out.println("Jmeno robota je: " + name);
+        this.generateName();        
 
         // vygeneruje vychozi souradnice pro robota
         this.generateCoordinate();
-        System.out.println("Souradnice jsou - X:" + coordinate.x + " Y:" + coordinate.y);
-
+        
         // vygeneruje smer
-        this.generateDirection();
-        System.out.println(direction.name());
+        this.generateDirection();     
     }
 
     //==SOUKROME OBJEKTOVE METODY===============================================
@@ -45,7 +42,8 @@ public class ControlModul {
     }
 
     private void generateName() {
-        int number = (int) (Math.random() * 10);
+        //int number = (int) (Math.random() * 10);
+        int number = 0;
 
         switch (number) {
             case 0:

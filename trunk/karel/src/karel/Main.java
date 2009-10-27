@@ -12,13 +12,21 @@ import java.util.Scanner;
  */
 public class Main {
 
+    // NECHAPU VYZNAM
     static int pokusJmeno = 0; //pokusy na jmeno
+    // SOUKROMA PROMENNA MODULU
     static String jmeno = "";
+    // SOUKROMA PROMENNA MODULU -> UPRAVENO NA ENUM
     static int smer = 0;
+    // SOUKROMA PROMENNA MODULU -> SOUCAST POINT
     static int poziceX = 0;
+    // SOUKROMA PROMENNA MODULU -> SOUCAST POINT
     static int poziceY = 0;
+    // SOUKROMA PROMENNA MODULU
     static int porucha = 0;
+    // VUBEC NENI TREBA
     static Random rand = new Random();
+    // SOUKROMA PROMENNA MODULU
     static boolean chybka = false;
 
     // OBSAZENO V KONSTROKTURU RIDICIHO MODULU
@@ -68,6 +76,7 @@ public class Main {
     }
 
 
+    // PREVEDENO NA "CONTROL NAME"
     public static String kontrolaJmena(String text) {
         String jmenoTest = "";
         String nic = "";
