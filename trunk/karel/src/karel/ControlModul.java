@@ -16,9 +16,9 @@ public class ControlModul {
     private String name;
 
     private enum Direction {
+
         NAHORU, VLEVO, DOLU, VPRAVO
     };
-    
     private Direction direction;
     private boolean error = false;
     private int errorBlock = 0;
@@ -26,13 +26,13 @@ public class ControlModul {
     //==KONSTRUKTOR=============================================================
     public ControlModul() {
         // vygeneruje jmeno pro robota
-        this.generateName();        
+        this.generateName();
 
         // vygeneruje vychozi souradnice pro robota
         this.generateCoordinate();
-        
+
         // vygeneruje smer
-        this.generateDirection();     
+        this.generateDirection();
     }
 
     //==SOUKROME OBJEKTOVE METODY===============================================
@@ -104,19 +104,65 @@ public class ControlModul {
     /**
      * Metoda generujici poruchu s pravdepobnosti 25%.
      * Porouchane bloky muzou mit cislo 1 - 9.
+     * @return true -> robot se porouchal, false -> nic se nestalo
      */
-    private void generateError() {
+    private boolean generateError() {
+        boolean result = false;
         // poruchovost 25%
-        if (((int) (Math.random() * 4 )) == 3) {
+        if (((int) (Math.random() * 4)) == 3) {
             // generuje se blok od 1 do 9
             errorBlock = ((int) (Math.random() * 9 + 1));
+            result = true;
         } else {
             errorBlock = 0;
-        }        
+        }
+        return result;
     }
 
     //==VEREJNE OBJEKTOVE METODY================================================
+    /**
+     * Metoda, ktera provede krok robota na planu mesta.
+     * @return 1 = 250 OK, 2 = 530 Havarie, 3 = 570 Porucha blok x, 4 = 572
+     *         Robot se rozpadl
+     *         Na nove souradnice se da nasledne extra zeptat, stejne tak na
+     *         porouchany blok -> zbytecne vraceni vice hodnot
+     */
+    public byte step() {
+        byte result = 1;
+        // pokud je robot porouchany a pokusi se udelat krok, nenavratne se
+        //  rozpadne
+        if (error) {
+            result = 4;
+        } else {
+            // vyhodnoti se, zda robot nehavaroval
+            if (generateError()) {
+                // robot se porouchal
+                result = 3;                
+            } else {
+                // robot dal funguje OK - provede se krok
+                switch (direction) {
+                    case NAHORU : coordinate.y++; break;
+                    case DOLU : coordinate.y--; break;
+                    case VLEVO : coordinate.x--; break;
+                    case VPRAVO : coordinate.x++; break;                    
+                }
+                
+                // zkontroluje se, zda robot nevysel mimo mesto
+                if ((coordinate.x<(-17)) || (coordinate.x>17) ||
+                    (coordinate.y<(-17)) || (coordinate.y>17)) {
+                    result = 2;                    
+                }
+            }
+        }
+        return result;
+    }
+
+    //==VEREJNE OBJETOVE METODY - GETERY A SETTERY==============================
     public String getName() {
         return name;
+    }
+
+    public String getCoordination() {
+        return "(" + coordinate.x + "," + coordinate.y + ")";
     }
 }

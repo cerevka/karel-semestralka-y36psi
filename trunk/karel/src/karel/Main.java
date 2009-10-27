@@ -237,6 +237,7 @@ public class Main {
         }
     }
 
+    // JE OBSAZENO V GENERATEERROR
     public static void generujPoruchu() {
         //generovani poruchy
         if ((Math.abs(rand.nextInt() % 3) + 1) == 3) { //generovani 1-4, kazdy ctvrty je porouchany
