@@ -137,20 +137,28 @@ public class ControlModul {
             // vyhodnoti se, zda robot nehavaroval
             if (generateError()) {
                 // robot se porouchal
-                result = 3;                
+                result = 3;
             } else {
                 // robot dal funguje OK - provede se krok
                 switch (direction) {
-                    case NAHORU : coordinate.y++; break;
-                    case DOLU : coordinate.y--; break;
-                    case VLEVO : coordinate.x--; break;
-                    case VPRAVO : coordinate.x++; break;                    
+                    case NAHORU:
+                        coordinate.y++;
+                        break;
+                    case DOLU:
+                        coordinate.y--;
+                        break;
+                    case VLEVO:
+                        coordinate.x--;
+                        break;
+                    case VPRAVO:
+                        coordinate.x++;
+                        break;
                 }
-                
+
                 // zkontroluje se, zda robot nevysel mimo mesto
-                if ((coordinate.x<(-17)) || (coordinate.x>17) ||
-                    (coordinate.y<(-17)) || (coordinate.y>17)) {
-                    result = 2;                    
+                if ((coordinate.x < (-17)) || (coordinate.x > 17) ||
+                        (coordinate.y < (-17)) || (coordinate.y > 17)) {
+                    result = 2;
                 }
             }
         }
@@ -162,20 +170,83 @@ public class ControlModul {
      */
     public void left() {
         switch (direction) {
-            case NAHORU : direction = Direction.VLEVO; break;
-            case VLEVO  : direction = Direction.DOLU; break;
-            case DOLU   : direction = Direction.VPRAVO; break;
-            case VPRAVO : direction = Direction.NAHORU; break;
+            case NAHORU:
+                direction = Direction.VLEVO;
+                break;
+            case VLEVO:
+                direction = Direction.DOLU;
+                break;
+            case DOLU:
+                direction = Direction.VPRAVO;
+                break;
+            case VPRAVO:
+                direction = Direction.NAHORU;
+                break;
         }
 
     }
 
+    /**
+     * Metoda, ktera vrati tajemstvi, pokud robot stoji na souradnicich [0,0]. 
+     * Pokud ne, metoda vraci tuto informaci v retezci "ERROR". Po pouziti teto
+     * metody je treba ukoncit spojeni.
+     * @return tajemstvi, kdyz souradnice neni [0,0], tak "ERROR"
+     */
+    public String secret() {
+        String result = "ERROR";
+        if (coordinate.x == 0 && coordinate.y == 0) {
+            result = "Pozor, stojis na bombe.";
+        }
+        return result;
+    }
+
+    /**
+     * Opravi porouchanu blok
+     * @param block cislo bloku, ktery se ma opravit
+     * @return true -> blok byl opraven, false -> na bloku nebyla porucha
+     */
+    public boolean repair(int block) {
+        boolean result = false;
+
+        // overeni, zda je nejaka porucha indikovana
+        if (error) {
+            // pokud se ma opravovat blok, ktery je opravdu poskozen
+            if (errorBlock==block) {
+                // odstrani se priznak poruchy
+                error = false;
+                // vrati se, ze byla porucha odstranena
+                result = true;
+            }
+        }
+
+        // pokud nebyla zadna porucha, vraci se false
+        // pokud bylo zadano spatne cislo bloku a nic opraveno nebylo, vraci
+        //   se false
+        return result;
+    }
+
     //==VEREJNE OBJETOVE METODY - GETERY A SETTERY==============================
+    /**
+     * Vrati jmeno robota
+     * @return Jmeno robota
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Vrati souradnice robota
+     * @return souradnice robota v podobe Stringu (x,y)
+     */
     public String getCoordination() {
         return "(" + coordinate.x + "," + coordinate.y + ")";
+    }
+
+    /**
+     * Vrati cislo porouchaneho bloku
+     * @return cislo porouchaneho bloku
+     */
+    public int getError() {
+        return errorBlock;
     }
 }
