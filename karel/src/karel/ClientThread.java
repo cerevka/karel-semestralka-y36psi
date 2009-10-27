@@ -142,7 +142,28 @@ public class ClientThread implements Runnable {
                         continue;
                     }
 
-                    // v tuto chvili mam zcela validni instrukci
+                    //**********************************************************
+                    //   V TUTO CHVILI MAM VALIDNI INSTRUKCI KE ZPRACOVANI
+                    //**********************************************************
+
+                    if (instruction.equals("KROK")) {
+                        // spusti se metoda pro krok
+                    } else {
+                        if (instruction.equals("VLEVO")) {
+                            // spusti se metoda pro otoceni
+                        } else {
+                            if (instruction.equals("ZVEDNI")) {
+                                // spusti se metoda pro zvednuti
+                            } else {
+                                if (instruction.startsWith("OPRAVIT")) {
+                                    // spusti se metoda pro opravu
+                                    // je delana se startWith, protoze se jeste
+                                    // musi parsovat cislo bloku
+                                }
+                            }
+
+                        }
+                    }
 
                     // pripravi se prostor pro novou instrukci
                     instruction = "";
