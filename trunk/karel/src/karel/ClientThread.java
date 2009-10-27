@@ -127,16 +127,16 @@ public class ClientThread implements Runnable {
                     // kontrola, zda je spravne osloveni, pokud ano, odstrani
                     //   ho z instrukce, jinak ceka na dalsi data
                     if (controlName() == false) {
-                        System.out.println("500 NEZNAMY PRIKAZ");
+                        writer.write("500 NEZNAMY PRIKAZ\r\n");
                         // pripravi se prostor pro novou instrukci
-                        instruction = "";                        
+                        instruction = "";
                         continue;
                     }
 
                     // kontrola, zda je instrukce validni, jinak ceka dal na
                     //   dalsi data
                     if (controlInstruction() == false) {
-                        System.out.println("500 NEZNAMY PRIKAZ");
+                        writer.write("500 NEZNAMY PRIKAZ\r\n");
                         // pripravi se prostor pro novou instrukci
                         instruction = "";
                         continue;
@@ -148,17 +148,66 @@ public class ClientThread implements Runnable {
 
                     if (instruction.equals("KROK")) {
                         // spusti se metoda pro krok
+                        byte result = modul.step();
+
+                        boolean endWhile = false;
+                        switch (result) {
+                            case 1:
+                                writer.write("250 OK "+modul.getCoordinate());
+                                break;
+                            case 2:
+                                writer.write("530 HAVARIE");
+                                closeConnection();
+                                endWhile = true;
+                                break;
+                            case 3:
+                                writer.write("570 PORUCHA BLOK "+modul.getError());
+                                break;
+                            case 4:
+                                writer.write("572 ROBOT SE ROZPADL");
+                                closeConnection();
+                                endWhile = true;
+                                break;
+                        }
+
+                        // skoncil switch, overim, zda se nema breaknout
+                        //   vnejsi cyklus na cteni
+                        if (endWhile) {
+                            break;
+                        }
+
                     } else {
                         if (instruction.equals("VLEVO")) {
                             // spusti se metoda pro otoceni
+                            modul.left();
                         } else {
                             if (instruction.equals("ZVEDNI")) {
                                 // spusti se metoda pro zvednuti
+                                String secret = modul.secret();
+                                if (secret.equals("ERROR")) {
+                                    writer.write("550 NELZE ZVEDNOUT ZNACKU\r\n");
+                                    // po zavolani teto metody se musi uzavrit spojeni
+                                    closeConnection();
+                                    break;
+                                } else {
+                                    writer.write("221 USPECH " + secret);
+                                    // po zavolani teto metody se musi uzavrit spojeni
+                                    closeConnection();
+                                    break;
+                                }
                             } else {
                                 if (instruction.startsWith("OPRAVIT")) {
                                     // spusti se metoda pro opravu
                                     // je delana se startWith, protoze se jeste
                                     // musi parsovat cislo bloku
+                                    int number = (int) (instruction.charAt(instruction.length() - 1) - '0');
+                                    if (modul.repair(number)) {
+                                        // blok byl opraven
+                                        writer.write("250 OK " + modul.getCoordinate());
+                                    } else {
+                                        // nebylo co opravit
+                                        writer.write("571 NENI PORUCHA");
+                                    }
                                 }
                             }
 

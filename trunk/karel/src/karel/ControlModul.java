@@ -238,7 +238,7 @@ public class ControlModul {
      * Vrati souradnice robota
      * @return souradnice robota v podobe Stringu (x,y)
      */
-    public String getCoordination() {
+    public String getCoordinate() {
         return "(" + coordinate.x + "," + coordinate.y + ")";
     }
 
