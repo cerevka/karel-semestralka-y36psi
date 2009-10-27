@@ -157,6 +157,19 @@ public class ControlModul {
         return result;
     }
 
+    /**
+     * Zajisti otoceni robota o 90 stupnu.
+     */
+    public void left() {
+        switch (direction) {
+            case NAHORU : direction = Direction.VLEVO; break;
+            case VLEVO  : direction = Direction.DOLU; break;
+            case DOLU   : direction = Direction.VPRAVO; break;
+            case VPRAVO : direction = Direction.NAHORU; break;
+        }
+
+    }
+
     //==VEREJNE OBJETOVE METODY - GETERY A SETTERY==============================
     public String getName() {
         return name;
