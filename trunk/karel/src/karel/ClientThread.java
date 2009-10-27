@@ -153,18 +153,18 @@ public class ClientThread implements Runnable {
                         boolean endWhile = false;
                         switch (result) {
                             case 1:
-                                writer.write("250 OK "+modul.getCoordinate());
+                                writer.write("250 OK "+modul.getCoordinate()+"\r\n");
                                 break;
                             case 2:
-                                writer.write("530 HAVARIE");
+                                writer.write("530 HAVARIE\r\n");
                                 closeConnection();
                                 endWhile = true;
                                 break;
                             case 3:
-                                writer.write("570 PORUCHA BLOK "+modul.getError());
+                                writer.write("570 PORUCHA BLOK "+modul.getError()+"\r\n");
                                 break;
                             case 4:
-                                writer.write("572 ROBOT SE ROZPADL");
+                                writer.write("572 ROBOT SE ROZPADL\r\n");
                                 closeConnection();
                                 endWhile = true;
                                 break;
@@ -190,7 +190,7 @@ public class ClientThread implements Runnable {
                                     closeConnection();
                                     break;
                                 } else {
-                                    writer.write("221 USPECH " + secret);
+                                    writer.write("221 USPECH " + secret+"\r\n");
                                     // po zavolani teto metody se musi uzavrit spojeni
                                     closeConnection();
                                     break;
@@ -203,10 +203,10 @@ public class ClientThread implements Runnable {
                                     int number = (int) (instruction.charAt(instruction.length() - 1) - '0');
                                     if (modul.repair(number)) {
                                         // blok byl opraven
-                                        writer.write("250 OK " + modul.getCoordinate());
+                                        writer.write("250 OK " + modul.getCoordinate()+"\r\n");
                                     } else {
                                         // nebylo co opravit
-                                        writer.write("571 NENI PORUCHA");
+                                        writer.write("571 NENI PORUCHA\r\n");
                                     }
                                 }
                             }

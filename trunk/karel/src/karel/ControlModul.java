@@ -42,8 +42,8 @@ public class ControlModul {
     }
 
     private void generateName() {
-        //int number = (int) (Math.random() * 10);
-        int number = 0;
+        int number = (int) (Math.random() * 10);
+        //int number = 0;
 
         switch (number) {
             case 0:
