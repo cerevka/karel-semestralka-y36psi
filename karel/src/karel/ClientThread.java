@@ -27,7 +27,7 @@ public class ClientThread implements Runnable {
     private Socket socket;
     private Thread thread;
     private ControlModul modul;
-    String instruction = "";
+    private String instruction = "";
 
     //==KONSTRUKTOR=============================================================
     /**
@@ -45,7 +45,6 @@ public class ClientThread implements Runnable {
             writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             // vytvori se ControlModul s aplikacni logikou
             modul = new ControlModul();
-            // nastartuje vlakno
         } catch (IOException ex) {
             System.err.println("ClientThread hlasi: IOException");
         }
@@ -129,7 +128,7 @@ public class ClientThread implements Runnable {
                     instruction += (char) currentChar;
                 }
                 // pokud byla detekovana koncova sekvence znaku, zacnu prikaz
-                //   pracovavat
+                //   zpracovavat
                 if (((char) currentChar) == '\n' && ((char) lastChar) == '\r') {
                     //odstrani se koncova sekvence
                     instruction = instruction.trim();
@@ -251,19 +250,13 @@ public class ClientThread implements Runnable {
 
                         }
                     }
-
                     // pripravi se prostor pro novou instrukci
                     instruction = "";
-
                 }
                 lastChar = currentChar;
-
             }
-
         } catch (IOException ex) {
             System.err.println("ClientThread hlasi: IOException");
         }
-
-
     }
 }

@@ -16,8 +16,8 @@ import java.awt.Point;
 public class ControlModul {
     //==SOUKROME TRIDNI PROMENNE================================================
     // slouzi k pocitani instanci a nasledne identifikaci klientu
-
     static int counter = 1;
+
     //==SOUKROME OBJEKTOVE PROMENNE=============================================
     // obsahuje cislo instance
     private int count = counter++;
@@ -130,7 +130,6 @@ public class ControlModul {
             errorBlock = ((int) (Math.random() * 9 + 1));
             result = true;
             countOfStep = 0;
-
         } else {
             // poruchovost 25%
             if (((int) (Math.random() * 4)) == 3) {
