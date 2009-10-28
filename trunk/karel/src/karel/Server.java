@@ -15,17 +15,20 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 
 public class Server {
-
+    //==KONSTRUKTOR=============================================================
+    /**
+     * Vytvori novou instanci serveru, ktera pripojuje klienty
+     * @param port cislo portu, na kterem server bude poslouchat
+     */
     public Server(int port) {
         try {
             // vytvoření serverového socketu pro navázání spojení
             ServerSocket serverSocket = new ServerSocket(port);
+            System.out.println("Server pripraven.");
 
-            while (true) {
-                System.out.println("Server pripraven.");
+            while (true) {                
                 Socket clientSocket = serverSocket.accept();
-                ClientThread vlakno = new ClientThread(clientSocket);                
-                vlakno.start();                
+                new ClientThread(clientSocket).start(); 
             }
 
         } catch (SocketException e) {
