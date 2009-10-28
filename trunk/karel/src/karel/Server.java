@@ -1,6 +1,12 @@
 package karel;
 
-
+/**
+ * @version 1.0
+ * @author Jan Cermak (cermaja9@fel.cvut.cz) & Tomas Cerevka (cerevtom@fel.cvut.cz)
+ * Semestrální práce z Y36PSI - práce číslo 1 - Karel server
+ * zadání: https://dsn.felk.cvut.cz/wiki/vyuka/y36psi/cviceni/uloha1-karel-zadani
+ * Dokonceno: 28.10.2009
+ */
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -16,12 +22,10 @@ public class Server {
             ServerSocket serverSocket = new ServerSocket(port);
 
             while (true) {
-                System.out.println("Server ceka na pripojeni klienta");
+                System.out.println("Server pripraven.");
                 Socket clientSocket = serverSocket.accept();
-                ClientThread vlakno = new ClientThread(clientSocket);
-                System.out.println("Startuji vlakno");
-                vlakno.start();
-                System.out.println("Pripojil jsem dalsiho klienta.");
+                ClientThread vlakno = new ClientThread(clientSocket);                
+                vlakno.start();                
             }
 
         } catch (SocketException e) {

@@ -1,5 +1,13 @@
 package karel;
 
+/**
+ * @version 1.0
+ * @author Jan Cermak (cermaja9@fel.cvut.cz) & Tomas Cerevka (cerevtom@fel.cvut.cz)
+ * Semestrální práce z Y36PSI - práce číslo 1 - Karel server
+ * zadání: https://dsn.felk.cvut.cz/wiki/vyuka/y36psi/cviceni/uloha1-karel-zadani
+ * Dokonceno: 28.10.2009
+ */
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -105,10 +113,13 @@ public class ClientThread implements Runnable {
         int currentChar;
         int lastChar = 'x';
 
+        System.out.println("Byl pripojen klient s ID: "+modul.getCount());
+
         try {
             // poslani uvodniho pozdravu
             writer.write("220 Oslovuj mne " + modul.getName() + ".\r\n");
             writer.flush();
+            System.out.println(modul.getCount()+" -> 220 Oslovuj mne "+modul.getName());
 
             // zpracovavani instrukci
             while ((currentChar = reader.read()) != -1) {
@@ -123,11 +134,15 @@ public class ClientThread implements Runnable {
                     //odstrani se koncova sekvence
                     instruction = instruction.trim();
 
+                    System.out.println(modul.getCount()+" <- "+instruction);
+
 
                     // kontrola, zda je spravne osloveni, pokud ano, odstrani
                     //   ho z instrukce, jinak ceka na dalsi data
                     if (controlName() == false) {
                         writer.write("500 NEZNAMY PRIKAZ\r\n");
+                        writer.flush();
+                        System.out.println(modul.getCount()+" -> 500 NEZNAMY PRIKAZ");
                         // pripravi se prostor pro novou instrukci
                         instruction = "";
                         continue;
@@ -137,6 +152,8 @@ public class ClientThread implements Runnable {
                     //   dalsi data
                     if (controlInstruction() == false) {
                         writer.write("500 NEZNAMY PRIKAZ\r\n");
+                        writer.flush();
+                        System.out.println(modul.getCount()+" -> 500 NEZNAMY PRIKAZ");
                         // pripravi se prostor pro novou instrukci
                         instruction = "";
                         continue;
@@ -154,17 +171,25 @@ public class ClientThread implements Runnable {
                         switch (result) {
                             case 1:
                                 writer.write("250 OK "+modul.getCoordinate()+"\r\n");
+                                writer.flush();
+                                System.out.println(modul.getCount()+" -> 250 OK "+modul.getCoordinate());
                                 break;
                             case 2:
                                 writer.write("530 HAVARIE\r\n");
+                                writer.flush();
+                                System.out.println(modul.getCount()+" -> 530 HAVARIE");
                                 closeConnection();
                                 endWhile = true;
                                 break;
                             case 3:
                                 writer.write("570 PORUCHA BLOK "+modul.getError()+"\r\n");
+                                writer.flush();
+                                System.out.println(modul.getCount()+" -> 570 PORUCHA BLOK "+modul.getError());
                                 break;
                             case 4:
                                 writer.write("572 ROBOT SE ROZPADL\r\n");
+                                writer.flush();
+                                System.out.println(modul.getCount()+" -> 572 ROBOT SE ROZPADL");
                                 closeConnection();
                                 endWhile = true;
                                 break;
@@ -180,17 +205,24 @@ public class ClientThread implements Runnable {
                         if (instruction.equals("VLEVO")) {
                             // spusti se metoda pro otoceni
                             modul.left();
+                            writer.write("250 OK "+modul.getCoordinate()+"\r\n");
+                            writer.flush();
+                            System.out.println(modul.getCount()+" -> 250 OK "+modul.getCoordinate());
                         } else {
                             if (instruction.equals("ZVEDNI")) {
                                 // spusti se metoda pro zvednuti
                                 String secret = modul.secret();
                                 if (secret.equals("ERROR")) {
                                     writer.write("550 NELZE ZVEDNOUT ZNACKU\r\n");
+                                    writer.flush();
+                                    System.out.println(modul.getCount()+" -> 550 NELZE ZVEDNOUT ZNACKU");
                                     // po zavolani teto metody se musi uzavrit spojeni
                                     closeConnection();
                                     break;
                                 } else {
                                     writer.write("221 USPECH " + secret+"\r\n");
+                                    writer.flush();
+                                    System.out.println(modul.getCount()+" -> 221 USPECH "+secret);
                                     // po zavolani teto metody se musi uzavrit spojeni
                                     closeConnection();
                                     break;
@@ -204,9 +236,15 @@ public class ClientThread implements Runnable {
                                     if (modul.repair(number)) {
                                         // blok byl opraven
                                         writer.write("250 OK " + modul.getCoordinate()+"\r\n");
+                                        writer.flush();
+                                        System.out.println(modul.getCount()+" -> 250 OK "+modul.getCoordinate());
                                     } else {
                                         // nebylo co opravit
                                         writer.write("571 NENI PORUCHA\r\n");
+                                        writer.flush();
+                                        System.out.println(modul.getCount()+" -> 571 NENI PORUCHA");
+                                        closeConnection();
+                                        break;
                                     }
                                 }
                             }

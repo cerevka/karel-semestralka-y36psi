@@ -1,8 +1,12 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package karel;
+
+/**
+ * @version 1.0
+ * @author Jan Cermak (cermaja9@fel.cvut.cz) & Tomas Cerevka (cerevtom@fel.cvut.cz)
+ * Semestrální práce z Y36PSI - práce číslo 1 - Karel server
+ * zadání: https://dsn.felk.cvut.cz/wiki/vyuka/y36psi/cviceni/uloha1-karel-zadani
+ * Dokonceno: 28.10.2009
+ */
 
 import java.awt.Point;
 
@@ -10,18 +14,30 @@ import java.awt.Point;
  * Trida s aplikacni logikou serveru.
  */
 public class ControlModul {
+    //==SOUKROME TRIDNI PROMENNE================================================
+    // slouzi k pocitani instanci a nasledne identifikaci klientu
 
+    static int counter = 1;
     //==SOUKROME OBJEKTOVE PROMENNE=============================================
+    // obsahuje cislo instance
+    private int count = counter++;
+    // souradnice robota
     private Point coordinate;
+    // jmeno
     private String name;
 
+    // mozne smery
     private enum Direction {
 
         NAHORU, VLEVO, DOLU, VPRAVO
     };
+    // smer robota
     private Direction direction;
+    // priznak rozbitosti robota
     private boolean error = false;
+    // cislo porouchaneho bloku
     private int errorBlock = 0;
+    private int countOfStep = 0;
 
     //==KONSTRUKTOR=============================================================
     public ControlModul() {
@@ -108,13 +124,24 @@ public class ControlModul {
      */
     private boolean generateError() {
         boolean result = false;
-        // poruchovost 25%
-        if (((int) (Math.random() * 4)) == 3) {
-            // generuje se blok od 1 do 9
+        // na desatem kroku se robot vzdy poroucha
+        if (countOfStep == 10) {
+            error = true;
             errorBlock = ((int) (Math.random() * 9 + 1));
             result = true;
+            countOfStep = 0;
+
         } else {
-            errorBlock = 0;
+            // poruchovost 25%
+            if (((int) (Math.random() * 4)) == 3) {
+                // generuje se blok od 1 do 9
+                errorBlock = ((int) (Math.random() * 9 + 1));
+                error = true;
+                result = true;
+            } else {
+                errorBlock = 0;
+                error = false;
+            }
         }
         return result;
     }
@@ -154,6 +181,7 @@ public class ControlModul {
                         coordinate.x++;
                         break;
                 }
+                countOfStep++;
 
                 // zkontroluje se, zda robot nevysel mimo mesto
                 if ((coordinate.x < (-17)) || (coordinate.x > 17) ||
@@ -211,7 +239,7 @@ public class ControlModul {
         // overeni, zda je nejaka porucha indikovana
         if (error) {
             // pokud se ma opravovat blok, ktery je opravdu poskozen
-            if (errorBlock==block) {
+            if (errorBlock == block) {
                 // odstrani se priznak poruchy
                 error = false;
                 // vrati se, ze byla porucha odstranena
@@ -248,5 +276,13 @@ public class ControlModul {
      */
     public int getError() {
         return errorBlock;
+    }
+
+    /**
+     * Vrati cislo instance - jednoznacna identifikace klienta
+     * @return cislo instance
+     */
+    public int getCount() {
+        return count;
     }
 }
