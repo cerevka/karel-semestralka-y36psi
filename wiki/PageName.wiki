@@ -1,0 +1,13 @@
+#summary One-sentence summary of this page.
+
+= Semestrální práce na předmět Y36PSI =
+
+Server, který simuluje pohyb robota Karla po mapě a plní příkazy klientů.
+
+
+= Specifikace =
+
+Obecné:
+  * Program je napsán v jazyku *Java*
+  * Stojí na architektuře MVC: _Model_, _View_, _Contoler_
+  * A tak dál.
