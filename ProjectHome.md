@@ -1,0 +1,1 @@
+Semestrální práce pro předmět Počítačové sítě na ČVUT FEL.
